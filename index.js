@@ -146,7 +146,9 @@ function contagem(litrosTotal, litrosJaConsumidos, horaAcorda, horaQueDorme) {
         console.log("Não há horários definidos para beber entre a hora de acordar e dormir.")
         return "Não há horários definidos para beber."
     }
+
     let intervalId
+    let vezes = 0
     const mensagemBeber = () => {
         if (horasParaBeber.length === 0 || litrosRestantes <= 0) {
             clearInterval(intervalId)
@@ -159,12 +161,13 @@ function contagem(litrosTotal, litrosJaConsumidos, horaAcorda, horaQueDorme) {
             return
         }
         const mlParaBeberAgora = litrosRestantes / horasParaBeber.length
-        console.log(`Consuma ${mlParaBeberAgora.toFixed(0)} mL de água.`)
+        console.log(`Consuma ${(mlParaBeberAgora * 1000).toFixed(0)} mL de água.`)
         litrosRestantes -= mlParaBeberAgora
         horasParaBeber.shift()
+        vezes++
     }
     mensagemBeber()
-    intervalId = setInterval(mensagemBeber, 7200000)
+    intervalId = setInterval(mensagemBeber, 1000)
     return intervalId
 }
 
@@ -271,7 +274,7 @@ do{
                         horaAcorda = parseInt(prompt("Que hora voce acorda? (EX: 8"))
                         horaDorme = parseInt(prompt("Hora que voce dorme? (EX: 22)"))
                     }while(typeof bebido !== "number" || bebido !== bebido || typeof horaAcorda !== 'number' || horaAcorda !== horaAcorda || typeof horaDorme !== "number" || horaDorme !== horaDorme)
-                    contagem(agua, bebido, horaAcorda, horaDorme) 
+                    contagem(agua, bebido, horaAcorda, horaDorme)
                     break
                 case 2:
                     let sair = 0
