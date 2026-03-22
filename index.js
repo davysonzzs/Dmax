@@ -1,56 +1,16 @@
-const prompt = require("prompt-sync")()
+import { common } from "./src/common.js"
+import { agua }  from "./src/aguaServices/agua.js"
+import { comida } from "./src/comidaServices/comida.js"
+import { tempoAgua } from "./src/tempoServices/tempoAgua.js"
+import PromptSync from "prompt-sync"
+const prompt = PromptSync()
 
 const login = { nome: "", genero: "", senha: "" }
 let medidaspessoas = { peso: 0, altura: 0, idade: 0, atividade: 0, problemas: [0, 0] }
 let clima = 0
 
-function contagem(litrosTotal, litrosJaConsumidos, horaAcorda, horaQueDorme) {
-    let litrosRestantes = litrosTotal - litrosJaConsumidos
-    const horasParaBeber = []
 
-    if (litrosRestantes <= 0) {
-        console.log("Você já consumiu os litros necessários ou mais! Parabéns!")
-        return "Você já consumiu os litros necessários ou mais!"
-    }
-
-    if (horaQueDorme <= horaAcorda) {
-        console.log("Erro: A hora de dormir deve ser depois da hora de acordar.")
-        return "Erro: Hora de dormir inválida."
-    }
-
-    for (let horaAtual = horaAcorda; horaAtual < horaQueDorme; horaAtual += 2) {
-        horasParaBeber.push(horaAtual)
-    }
-
-    if (horasParaBeber.length === 0) {
-        console.log("Não há horários definidos para beber entre a hora de acordar e dormir.")
-        return "Não há horários definidos para beber."
-    }
-
-    let intervalId
-    let vezes = 0
-    const mensagemBeber = () => {
-        if (horasParaBeber.length === 0 || litrosRestantes <= 0) {
-            clearInterval(intervalId)
-            console.log("Contagem de consumo de água finalizada!")
-            if (litrosRestantes <= 0) {
-                console.log("Parabéns! Você atingiu ou excedeu sua meta diária de hidratação.")
-            } else {
-                 console.log(`Faltaram ${litrosRestantes.toFixed(0)} mL para a meta. Finalizado por falta de horários.`)
-            }
-            return
-        }
-        const mlParaBeberAgora = litrosRestantes / horasParaBeber.length
-        console.log(`Consuma ${(mlParaBeberAgora * 1000).toFixed(0)} mL de água.`)
-        litrosRestantes -= mlParaBeberAgora
-        horasParaBeber.shift()
-        vezes++
-    }
-    mensagemBeber()
-    intervalId = setInterval(mensagemBeber, 1000)
-    return intervalId
-}
-
+console.clear()
 console.log("ligando...")
 console.log("Olá, eu sou Dmax! seu assistente virtual de saúde!")
 console.log("eu irei supervisionar sua alimentação e controlar seu consumo de água")
@@ -76,6 +36,7 @@ do{
         medidaspessoas.altura = 0
         medidaspessoas.idade = 0
         let validMedidas = false
+        console.clear()
         do{
             medidaspessoas.peso = parseFloat(prompt("qual seu peso atual (Ex: 70 ou 70.1): "))
             medidaspessoas.altura = parseFloat(prompt("qual sua altura atualmente (Ex: 1.70): "))
@@ -87,7 +48,7 @@ do{
             } else if(typeof medidaspessoas.idade !== "number" || medidaspessoas.idade !== medidaspessoas.idade){
                 console.log("digite uma idade valida!")
             } else {
-                let testeImc = imcEAjuste(medidaspessoas.peso, medidaspessoas.altura)
+                let testeImc = new common(medidaspessoas.peso, medidaspessoas.altura).imcEAjuste()
                 if(testeImc === null){
                     console.log("valores invalidos para peso/altura, tente novamente")
                 } else {
@@ -95,6 +56,7 @@ do{
                 }
             }
         } while(!validMedidas)
+        console.clear()
         medidaspessoas.atividade = 0
         medidaspessoas.problemas = [0, 0]
         clima = 0
@@ -111,9 +73,10 @@ do{
                 validRotina = true
             }
         } while(!validRotina)
-        let imc = imcEAjuste(medidaspessoas.peso, medidaspessoas.altura)
-        let agua = calculoDeLitrosDeAgua(medidaspessoas.idade, medidaspessoas.atividade, medidaspessoas.problemas, clima)
-        let comida = calcularComida(login.genero, medidaspessoas.peso, medidaspessoas.idade, medidaspessoas.altura, medidaspessoas.atividade)
+        console.clear()
+        let imc = new common(medidaspessoas.peso, medidaspessoas.altura).imcEAjuste()
+        let agua = new agua(medidaspessoas.idade, medidaspessoas.atividade, medidaspessoas.problemas, clima, medidaspessoas).calculoDeLitrosDeAgua()
+        let comida = new comida(login.genero, medidaspessoas).calcularComida()
         console.log(`
             Relatorio da consulta!
             seu imc estar: ${imc[0].toFixed(1)}

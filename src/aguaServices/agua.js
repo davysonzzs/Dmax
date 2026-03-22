@@ -56,5 +56,5 @@ export class agua extends common {
     const p1 = this.medidaspessoas.problemas[1] || 0
     litros -= litros * (p0 + p1) / 100
     return litros
-}
+    }
 }
