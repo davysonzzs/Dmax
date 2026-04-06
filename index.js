@@ -1,6 +1,6 @@
 import { common } from "./src/common.js"
-import { agua }  from "./src/aguaServices/agua.js"
 import { comida } from "./src/comidaServices/comida.js"
+import { agua } from "./src/aguaServices/agua.js"
 import { tempoAgua } from "./src/tempoServices/tempoAgua.js"
 import PromptSync from "prompt-sync"
 const prompt = PromptSync()
@@ -75,19 +75,19 @@ do{
         } while(!validRotina)
         console.clear()
         let imc = new common(medidaspessoas.peso, medidaspessoas.altura).imcEAjuste()
-        let agua = new agua(medidaspessoas.idade, medidaspessoas.atividade, medidaspessoas.problemas, clima, medidaspessoas).calculoDeLitrosDeAgua()
-        let comida = new comida(login.genero, medidaspessoas).calcularComida()
+        let aguaFormatada = new agua(medidaspessoas.idade, medidaspessoas.atividade, medidaspessoas.problemas, clima, medidaspessoas).calculoDeLitrosDeAgua()
+        let comidaFormatada = new comida(login.genero, medidaspessoas).calcularComida()
         console.log(`
             Relatorio da consulta!
             seu imc estar: ${imc[0].toFixed(1)}
             ${imc[2]}
-            litros de agua para consumo: ${agua.toFixed(1)}L por dia
-            calorias para consumo: ${comida[0].toFixed(0)}Kcal diarias
+            litros de agua para consumo: ${aguaFormatada.toFixed(1)}L por dia
+            calorias para consumo: ${comidaFormatada[0].toFixed(0)}Kcal diarias
             Macros diarios:
-            carboitrados: ${(comida[1].carbo).toFixed(0)} por dia
-            proteinas: ${(comida[1].proteinas).toFixed(0)} por dia
-            gorduras: ${(comida[1].gordura).toFixed(0)} por dia
-            fibras: ${comida[1].fibras} por dia
+            carboitrados: ${(comidaFormatada[1].carbo).toFixed(0)} por dia
+            proteinas: ${(comidaFormatada[1].proteinas).toFixed(0)} por dia
+            gorduras: ${(comidaFormatada[1].gordura).toFixed(0)} por dia
+            fibras: ${comidaFormatada[1].fibras} por dia
             `)
         console.log("Agora com esse dados, eu consigo te auxiliar na sua jornada!!")
         let sairDoMenu = false
@@ -117,7 +117,7 @@ do{
                         horaAcorda = parseInt(prompt("Que hora voce acorda? (EX: 8"))
                         horaDorme = parseInt(prompt("Hora que voce dorme? (EX: 22)"))
                     }while(typeof bebido !== "number" || bebido !== bebido || typeof horaAcorda !== 'number' || horaAcorda !== horaAcorda || typeof horaDorme !== "number" || horaDorme !== horaDorme)
-                    contagem(agua, bebido, horaAcorda, horaDorme)
+                    new tempoAgua(aguaFormatada, bebido, horaAcorda, horaDorme)
                     break
                 case 2:
                     let sair = 0
@@ -126,13 +126,13 @@ do{
                             Relatorio da consulta!
                             seu imc estar: ${imc[0].toFixed(1)}
                             ${imc[2]}
-                            litros de agua para consumo: ${agua.toFixed(1)}L por dia
-                            calorias para consumo: ${comida[0].toFixed(0)}Kcal diarias
+                            litros de agua para consumo: ${aguaFormatada.toFixed(1)}L por dia
+                            calorias para consumo: ${comidaFormatada[0].toFixed(0)}Kcal diarias
                             Macros diarios:
-                            carboitrados: ${(comida[1].carbo).toFixed(0)} por dia
-                            proteinas: ${(comida[1].proteinas).toFixed(0)} por dia
-                            gorduras: ${(comida[1].gordura).toFixed(0)} por dia
-                            fibras: ${comida[1].fibras} por dia
+                            carboitrados: ${(comidaFormatada[1].carbo).toFixed(0)} por dia
+                            proteinas: ${(comidaFormatada[1].proteinas).toFixed(0)} por dia
+                            gorduras: ${(comidaFormatada[1].gordura).toFixed(0)} por dia
+                            fibras: ${comidaFormatada[1].fibras} por dia
                             `)
                         do{
                             sair = parseInt(prompt("para sair digite 1: "))
@@ -161,7 +161,7 @@ do{
                         } else if(typeof medidaspessoas.idade !== "number" || medidaspessoas.idade !== medidaspessoas.idade){
                             console.log("digite uma idade valida!")
                         } else {
-                            let testeImc = imcEAjuste(medidaspessoas.peso, medidaspessoas.altura)
+                            let testeImc = new common(medidaspessoas.peso, medidaspessoas.altura).imcEAjuste()
                             if(testeImc === null){
                                 console.log("valores invalidos para peso/altura, tente novamente")
                             } else {
@@ -182,9 +182,9 @@ do{
                             validRotina = true
                         }
                     } while(!validRotina)
-                    imc = imcEAjuste(medidaspessoas.peso, medidaspessoas.altura)
-                    agua = calculoDeLitrosDeAgua(medidaspessoas.idade, medidaspessoas.atividade, medidaspessoas.problemas, clima)
-                    comida = calcularComida(login.genero, medidaspessoas.peso, medidaspessoas.idade, medidaspessoas.altura, medidaspessoas.atividade)
+                    imc = new common(medidaspessoas.peso, medidaspessoas.altura).imcEAjuste()
+                    aguaFormatada = new agua(medidaspessoas.idade, medidaspessoas.atividade, medidaspessoas.problemas, clima, medidaspessoas).calculoDeLitrosDeAgua()
+                    comidaFormatada = new comida(login.genero, medidaspessoas).calcularComida()
                     break
                 case 4:
                     sairDoMenu = true
